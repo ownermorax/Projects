@@ -82,7 +82,7 @@ def opros(message):
     mark1[chat_id] = 0
     mark2[chat_id] = 0
     students[chat_id] = 0
-    bot.send_message(chat_id, f"🔗 Ваша ссылка для опроса:\n\nhttps://t.me/otsennkkkkabot?start={chat_id}", reply_markup=markup)
+    bot.send_message(chat_id, f"🔗 Ваша ссылка для опроса:\n\nhttps://t.me/*юз бота*?start={chat_id}", reply_markup=markup)
 
 @bot.message_handler(
     func=lambda message: message.text == 'Завершить опрос')
