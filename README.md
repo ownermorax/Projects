@@ -1,1 +1,1 @@
-tg : https://t.me/ownermorax
+бот для создания постов с кнопками в Telegram канале
