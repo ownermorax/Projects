@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = 'your_very_secret_key_here'
 app.config['UPLOAD_FOLDER'] = 'archive'
-app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024  # 32MB max
+app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024  
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
