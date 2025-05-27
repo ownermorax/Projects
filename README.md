@@ -1,1 +1,1 @@
-tg : https://t.me/ownermorax
+https://t.me/bloodlusted or https://t.me/KartenonTemple
