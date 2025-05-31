@@ -1,1 +1,1 @@
-https://t.me/bloodlusted or https://t.me/KartenonTemple
+программа для очистки текста от водяных знаков ChatGPT
