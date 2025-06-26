@@ -1,1 +1,1 @@
-https://t.me/bloodlusted or https://t.me/KartenonTemple
+Программа для генерации паролей и првоерки их на стойкость
