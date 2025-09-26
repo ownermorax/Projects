@@ -1,1 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .login-form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        .success {
+            background-color: #fc979d;
+            color: #960008;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            flex-direction: column;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        .loading-text {
+            font-size: 16px;
+            color: #333;
+            text-align: center;
+        }
+        .progress-bar {
+            width: 80%;
+            height: 4px;
+            background-color: #f0f0f0;
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background-color: #007bff;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .status-messages {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-form">
+        <h2>Вход в систему</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="login">Логин:</label>
+                <input type="text" id="login" name="login" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" id="submitBtn">Войти</button>
+        </form>
 
+        <div id="message" class="message"></div>
+
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="spinner"></div>
+            <div class="loading-text">Идет авторизация...</div>
+            <div class="status-messages" id="statusMessages">
+                <div>✓ Проверка данных пользователя</div>
+                <div>✓ Подключение к базе данных</div>
+                <div>⏳ Проверка прав доступа...</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const login = document.getElementById('login').value;
+            const password = document.getElementById('password').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const messageDiv = document.getElementById('message');
+            const progressBar = document.getElementById('progressBar');
+            const statusMessages = document.getElementById('statusMessages');
+
+            // Показываем загрузку
+            submitBtn.disabled = true;
+            loadingOverlay.style.display = 'flex';
+            messageDiv.style.display = 'none';
+
+            // Анимация прогресса
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 1;
+                progressBar.style.width = progress + '%';
+
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }, 300); // 30 секунд / 100 = 300ms на каждый процент
+
+            // Меняем статус сообщения через 15 секунд
+            setTimeout(() => {
+                statusMessages.innerHTML = `
+                    <div>✓ Проверка данных пользователя</div>
+                    <div>✓ Подключение к базе данных</div>
+                    <div>✓ Проверка прав доступа</div>
+                    <div>⏳ Загрузка персональных настроек...</div>
+                `;
+            }, 15000);
+
+            // Отправляем AJAX запрос
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    login: login,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                clearInterval(progressInterval);
+                progressBar.style.width = '100%';
+
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    submitBtn.disabled = false;
+
+                    if (data.status === 'success') {
+                        messageDiv.textContent = 'Ошибка соединения с сервером';
+                        messageDiv.className = 'message success';
+                        document.getElementById('loginForm').reset();
+                    } else {
+                        messageDiv.textContent = 'Ошибка: ' + data.message;
+                        messageDiv.className = 'message error';
+                    }
+                    messageDiv.style.display = 'block';
+                }, 1000);
+            })
+            .catch(error => {
+                clearInterval(progressInterval);
+                loadingOverlay.style.display = 'none';
+                submitBtn.disabled = false;
+
+                messageDiv.textContent = 'Ошибка соединения с сервером';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
