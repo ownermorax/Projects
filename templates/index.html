@@ -164,12 +164,10 @@
             const progressBar = document.getElementById('progressBar');
             const statusMessages = document.getElementById('statusMessages');
 
-            // Показываем загрузку
             submitBtn.disabled = true;
             loadingOverlay.style.display = 'flex';
             messageDiv.style.display = 'none';
 
-            // Анимация прогресса
             let progress = 0;
             const progressInterval = setInterval(() => {
                 progress += 1;
@@ -178,9 +176,8 @@
                 if (progress >= 100) {
                     clearInterval(progressInterval);
                 }
-            }, 300); // 30 секунд / 100 = 300ms на каждый процент
+            }, 300);
 
-            // Меняем статус сообщения через 15 секунд
             setTimeout(() => {
                 statusMessages.innerHTML = `
                     <div>✓ Проверка данных пользователя</div>
@@ -190,7 +187,6 @@
                 `;
             }, 15000);
 
-            // Отправляем AJAX запрос
             fetch('/api/login', {
                 method: 'POST',
                 headers: {
