@@ -1,2 +1,1 @@
-https://xpowl.ru/
-https://t.me/bloodlusted 
+Реализация алгоритма SHA-256
